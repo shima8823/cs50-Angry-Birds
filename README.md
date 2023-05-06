@@ -8,4 +8,4 @@ english
 - []  Implement it such that when the player presses the space bar after they’ve launched an Alien (and it hasn’t hit anything yet), split the Alien into three Aliens that all behave just like the base Alien.
 
 japanese
-  エイリアン発射後（まだ何も当たっていない状態）、プレイヤーがスペースバーを押すと、エイリアンが3つに分裂して、ベースエイリアンと同じ挙動をするように実装する。
+- エイリアン発射後（まだ何も当たっていない状態）、プレイヤーがスペースバーを押すと、エイリアンが3つに分裂して、ベースエイリアンと同じ挙動をするように実装する。
