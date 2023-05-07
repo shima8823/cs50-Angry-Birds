@@ -183,15 +183,29 @@ function Level:update(dt)
             self.launchMarker:addAlien(xPos + 20, yPos - 50, xVel + 10, yVel - 20)
         end
 
-        -- if we fired our alien to the left or it's almost done rolling, respawn
-        if xPos < 0 or (math.abs(xVel) + math.abs(yVel) < 1.5) then
-            self.launchMarker:destroyAllAlines()
-            self.launchMarker = AlienLaunchMarker(self.world)
-
-            -- re-initialize level if we have no more aliens
-            if #self.aliens == 0 then
-                gStateMachine:change('start')
+        for k, alien in pairs(self.launchMarker.aliens) do
+            -- if alien destroyed, continue
+            if alien.body:isDestroyed() then
+                goto continue
             end
+
+            xPos = alien.body:getX()
+            xVel, yVel = alien.body:getLinearVelocity()
+
+            -- if we fired our alien to the left or it's almost done rolling, respawn
+            if xPos < 0 or xPos > VIRTUAL_WIDTH * 3 or (math.abs(xVel) + math.abs(yVel) < 1.5) then
+                alien.stopped = true
+            end
+            if self.launchMarker:areAllAliensStopped() then
+                self.launchMarker:destroyAllAlines()
+                self.launchMarker = AlienLaunchMarker(self.world)
+
+                -- re-initialize level if we have no more aliens
+                if #self.aliens == 0 then
+                    gStateMachine:change('start')
+                end
+            end
+            ::continue::
         end
     end
 end

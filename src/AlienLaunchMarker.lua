@@ -80,6 +80,16 @@ function AlienLaunchMarker:destroyAllAlines()
     for k, alien in pairs(self.aliens) do
         alien.body:destroy()
     end
+    self.aliens = {}
+end
+
+function AlienLaunchMarker:areAllAliensStopped()
+    for k, alien in pairs(self.aliens) do
+        if not alien.stopped then
+            return false
+        end
+    end
+    return true
 end
 
 function AlienLaunchMarker:render()
