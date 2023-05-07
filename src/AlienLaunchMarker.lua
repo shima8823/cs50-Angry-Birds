@@ -26,7 +26,7 @@ function AlienLaunchMarker:init(world)
     self.launched = false
 
     -- our alien we will eventually spawn
-    self.alien = nil
+    self.aliens = {}
 end
 
 function AlienLaunchMarker:update(dt)
@@ -47,6 +47,7 @@ function AlienLaunchMarker:update(dt)
 
             -- spawn new alien in the world, passing in user data of player
             self.alien = Alien(self.world, 'round', self.shiftedX, self.shiftedY, 'Player')
+            table.insert(self.aliens, self.alien)
 
             -- apply the difference between current X,Y and base X,Y as launch vector impulse
             self.alien.body:setLinearVelocity((self.baseX - self.shiftedX) * 10, (self.baseY - self.shiftedY) * 10)
@@ -64,6 +65,20 @@ function AlienLaunchMarker:update(dt)
             self.shiftedX = math.min(self.baseX + 30, math.max(x, self.baseX - 30))
             self.shiftedY = math.min(self.baseY + 30, math.max(y, self.baseY - 30))
         end
+    end
+end
+
+function AlienLaunchMarker:addAlien(xPos, yPos, xVel, yVel)
+    local newAlien = Alien(self.world, 'round', xPos, yPos, 'Player')
+    table.insert(self.aliens, newAlien)
+    newAlien.body:setLinearVelocity(xVel, yVel)
+    newAlien.fixture:setRestitution(0.4)
+    newAlien.body:setAngularDamping(1)
+end
+
+function AlienLaunchMarker:destroyAllAlines()
+    for k, alien in pairs(self.aliens) do
+        alien.body:destroy()
     end
 end
 
@@ -103,6 +118,9 @@ function AlienLaunchMarker:render()
         
         love.graphics.setColor(1, 1, 1, 1)
     else
-        self.alien:render()
+        -- render aliens
+        for k, alien in pairs(self.aliens) do
+            alien:render()
+        end
     end
 end
