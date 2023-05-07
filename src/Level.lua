@@ -27,6 +27,7 @@ function Level:init()
 
         -- if we collided between both the player and an obstacle...
         if types['Obstacle'] and types['Player'] then
+            self.ObstacleTouched = true
 
             -- grab the body that belongs to the player
             local playerFixture = a:getUserData() == 'Player' and a or b
@@ -174,10 +175,17 @@ function Level:update(dt)
     if self.launchMarker.launched then
         local xPos, yPos = self.launchMarker.alien.body:getPosition()
         local xVel, yVel = self.launchMarker.alien.body:getLinearVelocity()
-        
+
+        -- if space is pressed, add a new alien of player type
+        if love.keyboard.wasPressed('space') and #self.launchMarker.aliens == 1 and not self.ObstacleTouched then
+            -- Create a new alien on level near x and y of player alien
+            self.launchMarker:addAlien(xPos - 20, yPos + 50, xVel - 10, yVel + 20)
+            self.launchMarker:addAlien(xPos + 20, yPos - 50, xVel + 10, yVel - 20)
+        end
+
         -- if we fired our alien to the left or it's almost done rolling, respawn
         if xPos < 0 or (math.abs(xVel) + math.abs(yVel) < 1.5) then
-            self.launchMarker.alien.body:destroy()
+            self.launchMarker:destroyAllAlines()
             self.launchMarker = AlienLaunchMarker(self.world)
 
             -- re-initialize level if we have no more aliens
